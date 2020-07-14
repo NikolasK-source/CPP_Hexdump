@@ -30,10 +30,17 @@ constexpr byte_t BYTE_MASK = 0xFF;
 Hexdump::Hexdump(const void *data, size_t size, size_t line_width)
 {
     // not data --> no hex dump --> empty string
-    if (size == 0) _str = std::string( );
+    if (size == 0) 
+    {
+        _str = std::string( );
+        return;
+    }
 
     if (line_width < MIN_LINE_WIDTH)
-        throw std::invalid_argument(std::string(__PRETTY_FUNCTION__) + ": line width to small (must be at least 4)");
+        throw std::invalid_argument(std::string(__PRETTY_FUNCTION__) + ": line width to small (must be at least 4)!");
+    
+    if(data == nullptr)
+        throw std::invalid_argument(std::string(__PRETTY_FUNCTION__) + ": data must not be a null pointer!");
 
     // number of bytes printed per line
     // each byte printed as: 2 digits hex + blank + ASCII char ( = 4 chars )
