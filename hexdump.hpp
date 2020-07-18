@@ -27,6 +27,7 @@ class Hexdump final
 {
     private:
         std::string _str;
+
     public:
         /*! \brief creates a hex dump
          *
@@ -36,25 +37,41 @@ class Hexdump final
          *      line_width  max line width of returned string
          */
         Hexdump(const void* data, size_t size, size_t line_width = DEFAULT_LINE_WIDTH);
-        ~Hexdump() {};
+
+        // not usable if <array> is not included:
+#ifdef _GLIBCXX_ARRAY
+
+        //! create Hexdump from std::array
+        template <typename T, unsigned long n>
+        explicit inline Hexdump(const std::array<T, n>& array, size_t line_width = DEFAULT_LINE_WIDTH) :
+                Hexdump(&array[0], (n * sizeof(T)), line_width) { }
+#endif
+
+        // not usable if <vector> is not included:
+#if defined _GLIBCXX_VECTOR || defined _GLIBCXX_PROFILE_VECTOR || defined _GLIBCXX_DEBUG_VECTOR
+
+        //! create Hexdump from std::vector
+        template <typename T>
+        explicit inline Hexdump(const std::vector<T>& vector, size_t line_width = DEFAULT_LINE_WIDTH) :
+                Hexdump(&vector[0], (vector.size() * sizeof(T)), line_width) { }
+#endif
+
+        //! create Hexdump from any type
+        template <typename T>
+        explicit inline Hexdump(const T& data, size_t line_width = DEFAULT_LINE_WIDTH) :
+                Hexdump(&data, sizeof(T), line_width) { }
 
         //! get the hex dump string
-        inline const std::string& str() const;
+        inline const std::string& str() const { return _str; };
 };
 
-template<typename T>
-Hexdump get_Hexdump(T data, size_t line_width = DEFAULT_LINE_WIDTH)
+//! write Hexdump to output stream
+inline std::ostream& operator << (std::ostream& os, const Hexdump& hex)
 {
-    return Hexdump(&data, sizeof(T), line_width);
-}
-
-std::ostream& operator << (std::ostream& os, const Hexdump& hex);
-
-inline const std::string& Hexdump::str( ) const
-{
-    return _str;
+    return os << hex.str();
 }
 
 } /* namespace Hexdump */
 } /* namespace Koesling */
 } /* namespace de */
+

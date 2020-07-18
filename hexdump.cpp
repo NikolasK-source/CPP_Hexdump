@@ -22,10 +22,11 @@ namespace de {
 namespace Koesling {
 namespace Hexdump {
 
-typedef uint8_t byte_t;
+typedef uint8_t byte_t;                 //!< 1 byte data type
 
-constexpr size_t MIN_LINE_WIDTH = 4;
-constexpr byte_t BYTE_MASK = 0xFF;
+constexpr size_t MIN_LINE_WIDTH = 4;    //!< minimum line width (byte(2) + blank(1) + ascii(1) = 4)
+constexpr byte_t BYTE_MASK = 0xFF;      //!< uses as mask for the least significant byte
+
 
 Hexdump::Hexdump(const void *data, size_t size, size_t line_width)
 {
@@ -37,7 +38,8 @@ Hexdump::Hexdump(const void *data, size_t size, size_t line_width)
     }
 
     if (line_width < MIN_LINE_WIDTH)
-        throw std::invalid_argument(std::string(__PRETTY_FUNCTION__) + ": line width to small (must be at least 4)!");
+        throw std::invalid_argument(std::string(__PRETTY_FUNCTION__) + ": line width to small (must be at least " +
+                std::to_string(MIN_LINE_WIDTH) + ")!");
     
     if(data == nullptr)
         throw std::invalid_argument(std::string(__PRETTY_FUNCTION__) + ": data must not be a null pointer!");
@@ -54,10 +56,10 @@ Hexdump::Hexdump(const void *data, size_t size, size_t line_width)
     std::ostringstream hex_dump;
     hex_dump << std::setfill('0') << std::hex;
 
-    // data as bytes
+    // data as byte type pointer
     auto byte_data = reinterpret_cast<const byte_t*>(data);
 
-    size_t line_bytes = 0;
+    size_t line_bytes = 0;  // number of bytes in the current line
     for (size_t i = 0; i < size; i++)
     {
         // data output
@@ -77,30 +79,24 @@ Hexdump::Hexdump(const void *data, size_t size, size_t line_width)
         }
     }
 
-    // get number of "empty bytes" for last line
-    size_t dummys = size % bytes_per_line;
+    // get number of bytes in incomlete last line
+    size_t last_line_bytes = size % bytes_per_line;
 
-    // output dummy bytes
-    if (dummys)
+    // output dummy bytes (if required)
+    if (last_line_bytes)
     {
-        for (size_t i = 0; i < (bytes_per_line - dummys); i++)
-        {
-            hex_dump << "   ";              // output "empty byte"
-            ascii[bytes_per_line - (i + 1)] = 0;  // move zero termination
-        }
+        auto dummys = bytes_per_line - last_line_bytes;               // number of dummy bytes
+
+        hex_dump << std::setfill(' ');
+        hex_dump << std::setw(static_cast<int>(dummys) * 3) << "";    // output "empty bytes"
+        ascii[last_line_bytes] = 0;                                   // move zero termination
         hex_dump << std::string(ascii.get( ));
     }
 
+    // store hex dump string
     _str = hex_dump.str( );
 }
 
 } /* namespace Hexdump */
-
-std::ostream& Hexdump::operator <<(std::ostream &os, const Hexdump &hex)
-{
-    os << hex.str();
-    return os;
-}
-
 } /* namespace Koesling */
 } /* namespace de */
