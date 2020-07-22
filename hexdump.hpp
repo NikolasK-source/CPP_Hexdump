@@ -56,11 +56,6 @@ class Hexdump final
                 Hexdump(&vector[0], (vector.size() * sizeof(T)), line_width) { }
 #endif
 
-        //! create Hexdump from any type
-        template <typename T>
-        explicit inline Hexdump(const T& data, size_t line_width = DEFAULT_LINE_WIDTH) :
-                Hexdump(&data, sizeof(T), line_width) { }
-
         //! get the hex dump string
         inline const std::string& str() const { return _str; };
 };
