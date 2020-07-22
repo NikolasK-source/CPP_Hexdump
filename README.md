@@ -28,14 +28,14 @@ std::cout << Hexdump(arr, ARR_SIZE) << std::endl
 ### Create hex dump from array with custom line width (4-?? chars)
 
 ```c++
-int arr[ARR_SIZE];
+long arr[ARR_SIZE];
 ...
 std::cout << Hexdump(arr, ARR_SIZE, LINE_WIDTH) << std::endl
 ```
 
 ### Create hex dump from std::array and std::vector
 ```c++
-std::array<int, ARR_SIZE> arr;
+std::array<double, ARR_SIZE> arr;
 std::vector<int> vec;
 ...
 std::cout << Hexdump(arr) << std::endl;
