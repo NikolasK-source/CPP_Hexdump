@@ -18,14 +18,14 @@ ef a4 e4 d7 e9 be db a3 da 93 58 2f 1b ee 47 a6 86 2f 0c 1f ..........X/..G../..
 ```
 
 ## Examples
-### Create hexdump from array with default line width (80 chars)
+### Create hex dump from array with default line width (80 chars)
 ```c++
 int arr[ARR_SIZE];
 ...
 std::cout << Hexdump(arr, ARR_SIZE) << std::endl
 ```
 
-### Create hexdump from array with custom line width (4-?? chars)
+### Create hex dump from array with custom line width (4-?? chars)
 
 ```c++
 int arr[ARR_SIZE];
@@ -33,7 +33,7 @@ int arr[ARR_SIZE];
 std::cout << Hexdump(arr, ARR_SIZE, LINE_WIDTH) << std::endl
 ```
 
-### Create hexdump from std::array and std::vector
+### Create hex dump from std::array and std::vector
 ```c++
 std::array<int, ARR_SIZE> arr;
 std::vector<int> vec;
