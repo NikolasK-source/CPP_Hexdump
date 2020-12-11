@@ -1,2 +1,13 @@
 *.a
 *.o
+
+# IDE dirs
+.vscode
+.cproject
+.project
+.settings/
+/Debug/
+.idea
+
+build*
+cmake-build*
