@@ -12,10 +12,8 @@
  */
 
 #include "hexdump.hpp"
-#include <stdexcept>
 #include <sstream>
 #include <iomanip>
-#include <cctype>
 #include <memory>
 
 namespace de {
@@ -46,7 +44,7 @@ Hexdump::Hexdump(const void *data, size_t size, size_t line_width)
 
     // number of bytes printed per line
     // each byte printed as: 2 digits hex + blank + ASCII char ( = 4 chars )
-    size_t bytes_per_line = line_width >> 2; // >>2 equals /4 for integer types
+    size_t bytes_per_line = line_width / 4;
 
     // ASCII output buffer
     std::unique_ptr<char[ ]> ascii(new char[bytes_per_line + 1]);
@@ -79,16 +77,16 @@ Hexdump::Hexdump(const void *data, size_t size, size_t line_width)
         }
     }
 
-    // get number of bytes in incomlete last line
+    // get number of bytes in incomplete last line
     size_t last_line_bytes = size % bytes_per_line;
 
     // output dummy bytes (if required)
     if (last_line_bytes)
     {
-        auto dummys = bytes_per_line - last_line_bytes;               // number of dummy bytes
+        auto dummies = bytes_per_line - last_line_bytes;               // number of dummy bytes
 
         hex_dump << std::setfill(' ');
-        hex_dump << std::setw(static_cast<int>(dummys) * 3) << "";    // output "empty bytes"
+        hex_dump << std::setw(static_cast<int>(dummies) * 3) << "";    // output "empty bytes"
         ascii[last_line_bytes] = 0;                                   // move zero termination
         hex_dump << std::string(ascii.get( ));
     }
