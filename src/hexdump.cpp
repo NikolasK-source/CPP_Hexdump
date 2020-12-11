@@ -18,7 +18,7 @@
 
 namespace de {
 namespace Koesling {
-namespace Hexdump {
+namespace Util {
 
 typedef uint8_t byte_t;                 //!< 1 byte data type
 
@@ -95,6 +95,6 @@ Hexdump::Hexdump(const void *data, size_t size, size_t line_width)
     _str = hex_dump.str( );
 }
 
-} /* namespace Hexdump */
+} /* namespace Util */
 } /* namespace Koesling */
 } /* namespace de */

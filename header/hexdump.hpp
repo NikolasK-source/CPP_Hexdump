@@ -18,7 +18,7 @@
 
 namespace de {
 namespace Koesling {
-namespace Hexdump {
+namespace Util {
 
 //! default line width
 constexpr size_t DEFAULT_LINE_WIDTH = 80;
@@ -66,7 +66,7 @@ inline std::ostream& operator << (std::ostream& os, const Hexdump& hex)
     return os << hex.str();
 }
 
-} /* namespace Hexdump */
+} /* namespace Util */
 } /* namespace Koesling */
 } /* namespace de */
 
