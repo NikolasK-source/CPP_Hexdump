@@ -56,7 +56,7 @@ public:
 #endif
 
     //! get the hex dump string
-    inline const std::string &str() const { return _str; };
+    inline const std::string &str() const { return _str; }
 };
 
 //! write Hexdump to output stream
