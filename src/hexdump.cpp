@@ -12,34 +12,32 @@
  */
 
 #include "hexdump.hpp"
-#include <sstream>
 #include <iomanip>
 #include <memory>
+#include <sstream>
 
 namespace de {
 namespace Koesling {
 namespace Util {
 
-typedef uint8_t byte_t;                 //!< 1 byte data type
+typedef uint8_t byte_t;  //!< 1 byte data type
 
-constexpr size_t MIN_LINE_WIDTH = 4;    //!< minimum line width (byte(2) + blank(1) + ascii(1) = 4)
-constexpr byte_t BYTE_MASK = 0xFF;      //!< uses as mask for the least significant byte
+constexpr size_t MIN_LINE_WIDTH = 4;     //!< minimum line width (byte(2) + blank(1) + ascii(1) = 4)
+constexpr byte_t BYTE_MASK      = 0xFF;  //!< uses as mask for the least significant byte
 
 
-Hexdump::Hexdump(const void *data, size_t size, size_t line_width)
-{
+Hexdump::Hexdump(const void *data, size_t size, size_t line_width) {
     // not data --> no hex dump --> empty string
-    if (size == 0) 
-    {
-        _str = std::string( );
+    if (size == 0) {
+        _str = std::string();
         return;
     }
 
     if (line_width < MIN_LINE_WIDTH)
         throw std::invalid_argument(std::string(__PRETTY_FUNCTION__) + ": line width to small (must be at least " +
-                std::to_string(MIN_LINE_WIDTH) + ")!");
-    
-    if(data == nullptr)
+                                    std::to_string(MIN_LINE_WIDTH) + ")!");
+
+    if (data == nullptr)
         throw std::invalid_argument(std::string(__PRETTY_FUNCTION__) + ": data must not be a null pointer!");
 
     // number of bytes printed per line
@@ -47,7 +45,7 @@ Hexdump::Hexdump(const void *data, size_t size, size_t line_width)
     size_t bytes_per_line = line_width / 4;
 
     // ASCII output buffer
-    std::unique_ptr<char[ ]> ascii(new char[bytes_per_line + 1]);
+    std::unique_ptr<char[]> ascii(new char[bytes_per_line + 1]);
     ascii[bytes_per_line] = 0;  // zero (\0) termination
 
     // return value string stream
@@ -55,11 +53,10 @@ Hexdump::Hexdump(const void *data, size_t size, size_t line_width)
     hex_dump << std::setfill('0') << std::hex;
 
     // data as byte type pointer
-    auto byte_data = reinterpret_cast<const byte_t*>(data);
+    auto byte_data = reinterpret_cast<const byte_t *>(data);
 
     size_t line_bytes = 0;  // number of bytes in the current line
-    for (size_t i = 0; i < size; i++)
-    {
+    for (size_t i = 0; i < size; i++) {
         // data output
         hex_dump << std::setw(2) << (byte_data[i] & BYTE_MASK);
 
@@ -69,9 +66,8 @@ Hexdump::Hexdump(const void *data, size_t size, size_t line_width)
         hex_dump << ' ';
 
         // output ASCII buffer and do line break (if not last line)
-        if (++line_bytes >= bytes_per_line)
-        {
-            hex_dump << std::string(ascii.get( ));
+        if (++line_bytes >= bytes_per_line) {
+            hex_dump << std::string(ascii.get());
             if ((i + 1) < size) hex_dump << std::endl;
             line_bytes = 0;
         }
@@ -81,18 +77,17 @@ Hexdump::Hexdump(const void *data, size_t size, size_t line_width)
     size_t last_line_bytes = size % bytes_per_line;
 
     // output dummy bytes (if required)
-    if (last_line_bytes)
-    {
-        auto dummies = bytes_per_line - last_line_bytes;               // number of dummy bytes
+    if (last_line_bytes) {
+        auto dummies = bytes_per_line - last_line_bytes;  // number of dummy bytes
 
         hex_dump << std::setfill(' ');
-        hex_dump << std::setw(static_cast<int>(dummies) * 3) << "";    // output "empty bytes"
-        ascii[last_line_bytes] = 0;                                   // move zero termination
-        hex_dump << std::string(ascii.get( ));
+        hex_dump << std::setw(static_cast<int>(dummies) * 3) << "";  // output "empty bytes"
+        ascii[last_line_bytes] = 0;                                  // move zero termination
+        hex_dump << std::string(ascii.get());
     }
 
     // store hex dump string
-    _str = hex_dump.str( );
+    _str = hex_dump.str();
 }
 
 } /* namespace Util */
